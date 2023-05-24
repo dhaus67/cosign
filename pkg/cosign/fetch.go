@@ -69,8 +69,11 @@ func FetchSignaturesForReference(_ context.Context, ref name.Reference, opts ...
 	if err != nil {
 		return nil, err
 	}
+	return FetchSignatures(simg)
+}
 
-	sigs, err := simg.Signatures()
+func FetchSignatures(se oci.SignedEntity) ([]SignedPayload, error) {
+	sigs, err := se.Signatures()
 	if err != nil {
 		return nil, fmt.Errorf("remote image: %w", err)
 	}
@@ -79,7 +82,7 @@ func FetchSignaturesForReference(_ context.Context, ref name.Reference, opts ...
 		return nil, fmt.Errorf("fetching signatures: %w", err)
 	}
 	if len(l) == 0 {
-		return nil, fmt.Errorf("no signatures associated with %s", ref)
+		return nil, fmt.Errorf("no signatures associated")
 	}
 
 	signatures := make([]SignedPayload, len(l))
